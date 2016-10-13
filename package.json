@@ -1,0 +1,39 @@
+{
+  "name": "abbott",
+  "version": "0.0.1",
+  "description": "Datatypes for cartesian coordinate systems.",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "mocha --require babel-register --bail src/**/*.spec.js",
+    "watch:test": "npm run test -- --watch",
+    "build": "babel src --ignore \"**/*.spec.js\" -d dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cbrandolino/abbott.git"
+  },
+  "keywords": [
+    "datatype",
+    "visualization",
+    "cartesian",
+    "coordinates",
+    "datasets"
+  ],
+  "author": "Claudio Brandolino <cbrandolino@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cbrandolino/abbott/issues"
+  },
+  "homepage": "https://github.com/cbrandolino/abbott#readme",
+  "devDependencies": {
+    "babel-cli": "^6.16.0",
+    "babel-core": "^6.17.0",
+    "babel-plugin-transform-flow-strip-types": "^6.14.0",
+    "babel-preset-es2015": "^6.16.0",
+    "babel-preset-stage-0": "^6.16.0",
+    "babel-register": "^6.16.3",
+    "eslint": "^3.7.1",
+    "flow-bin": "^0.33.0",
+    "mocha": "^3.1.2"
+  }
+}
