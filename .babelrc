@@ -1,0 +1,4 @@
+{
+  "compact": true,
+  "presets": ["react", "plugin-transform-flow-strip-types", "stage-0"]
+}
