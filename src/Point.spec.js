@@ -11,6 +11,7 @@ const mixedPayload = { halfX: 1, y: 2 };
 const id = "Pointy McPointface";
 
 describe('Types: Point', function() {
+
   describe('Meta', function() {
     const p = new Point(id, orderlyPayload);
     it('gets copy of payload', function() {
@@ -19,20 +20,17 @@ describe('Types: Point', function() {
       wontChangeProp.x = null;
       expect(p.payload).to.eql(orderlyPayload);
     });
-    it('gets copy of dimensionsKeys ', function() {
-      expect(p.dimensionKeys).to.eql(dimensionKeys);
-      const wontChangeProp = p.payload;
-      wontChangeProp.x = null;
-      expect(p.dimensionKeys).to.eql(dimensionKeys);
-    });
     it('gets id', function() {
       expect(p.id).to.eql(id);
     });
-  })
+  });
 
   describe('Dimensions', function() {
-    const p = new Point(id, orderlyPayload);
     describe('Default dimensions', function() {
+      const p = new Point(id, orderlyPayload);
+      it('exposes default dimensions', function() {
+        expect(p.x).to.equal(2);
+      });
     });
   });
 });

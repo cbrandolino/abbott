@@ -1,8 +1,18 @@
+/* global Proxy:true */
+
 const defaultDimensions = {
-  x: (it) => it,
-  y: (it) => it,
-  z: (it) => it,
+  x: 'x',
+  y: 'y',
+  z: 'z',
 }
+
+
+const computeDimension = function(obj, name) {
+  return (typeof obj.dimensionFns[name] === 'string') ?
+    obj.meta.payload[name] :
+    obj.dimensionFns[name](obj.meta.payload[name]);
+} 
+
 
 class Point {
 
@@ -10,13 +20,15 @@ class Point {
     id, payload, dimensions, 
     { merge=true, formatters={} } = {}
   ) {
-    this.prepareDimensions(dimensions, merge);
+
+    this.prepareDimensions(dimensions, merge)
     this.meta = { 
       id,
       payload,
-      formatters,
-      dimensions: Object.keys(this.dimensions),
     };
+
+    this.formatters = formatters;
+    this.computedDimensions = { };
   }
 
   get id() {
@@ -27,15 +39,27 @@ class Point {
     return Object.assign({}, this.meta.payload);
   }
 
-  get dimensionKeys() {
-    return this.meta.dimensions.slice();
-  }
-
   prepareDimensions(dimensions, merge) {
-    this.dimensions = merge ? 
+    this.dimensionFns = merge ? 
       Object.assign(defaultDimensions, dimensions) :
       dimensions;
+    Object.keys(this.dimensionFns).forEach((key) => {
+      Object.defineProperty(this, key, {
+        get: () => {
+          if (!(key in this.dimensionFns)) {
+            throw new Error(`No getter for ${key}.`);
+          }
+          if (typeof this.computedDimensions[key] === 'undefined') {
+            this.computedDimensions[key] = computeDimension(this, key);
+          }
+          return this.computedDimensions[key];
+        }
+      });
+    });
   }
+
+
+
 }
 
 export default Point;
