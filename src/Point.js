@@ -1,5 +1,3 @@
-/* global Proxy:true */
-
 const defaultDimensions = {
   x: 'x',
   y: 'y',
@@ -9,10 +7,9 @@ const defaultDimensions = {
 
 const computeDimension = function(obj, name) {
   return (typeof obj.dimensionFns[name] === 'string') ?
-    obj.meta.payload[name] :
-    obj.dimensionFns[name](obj.meta.payload[name]);
+    obj.meta.payload[obj.dimensionFns[name]] :
+    obj.dimensionFns[name](obj.meta.payload);
 } 
-
 
 class Point {
 
@@ -21,12 +18,8 @@ class Point {
     { merge=true, formatters={} } = {}
   ) {
 
-    this.prepareDimensions(dimensions, merge)
-    this.meta = { 
-      id,
-      payload,
-    };
-
+    this.prepareDimensions(dimensions, merge);
+    this.meta = { id, payload };
     this.formatters = formatters;
     this.computedDimensions = { };
   }
@@ -41,7 +34,7 @@ class Point {
 
   prepareDimensions(dimensions, merge) {
     this.dimensionFns = merge ? 
-      Object.assign(defaultDimensions, dimensions) :
+      Object.assign({}, defaultDimensions, dimensions) :
       dimensions;
     Object.keys(this.dimensionFns).forEach((key) => {
       Object.defineProperty(this, key, {
@@ -53,13 +46,10 @@ class Point {
             this.computedDimensions[key] = computeDimension(this, key);
           }
           return this.computedDimensions[key];
-        }
+        },
       });
     });
   }
-
-
-
 }
 
 export default Point;
