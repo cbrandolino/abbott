@@ -1,8 +1,8 @@
 {
   "parser": "babel-eslint",
   "rules": {
-    "arrow-body-style":          "as-needed",
-    "brace-style":               "1tbs",
+    "arrow-body-style":          "error",
+    "brace-style":              [ "error", "1tbs" ],
     "camelcase":                  1,
     "comma-spacing":              0,
     "comma-dangle":             [ 2, "always-multiline" ],
@@ -35,7 +35,7 @@
     "no-var":                     "error",
     "no-multiple-empty-lines":  [ "error", { "max": 2, "maxEOF": 1 } ],
     "prefer-const":               "error",
-    "radix":                      "always",
+    "radix":                      "error",
     "space-before-function-paren": 0,
     "strict":                      2,
     "vars-on-top":                 0
