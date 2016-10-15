@@ -1,6 +1,6 @@
 {
-  "name": "abbott",
-  "version": "0.0.2",
+  "name": "bth-abbott",
+  "version": "0.0.3",
   "description": "Datatypes for cartesian coordinate systems.",
   "main": "dist/index.js",
   "scripts": {
