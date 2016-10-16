@@ -5,12 +5,16 @@
 import { Map } from 'immutable';
 import { expect } from 'chai';
 import Series from './Series';
-import Point from './Point'
+import Point from './Point';
 
 
 const pointPayloads = [
   { bucket: 3, value: 6 },
   { bucket: 5, value: 10 },
+];
+
+const morePayloads = [
+  { bucket: 7, value: 14 },
 ];
 
 const pointDimensions = {
@@ -46,5 +50,13 @@ describe('Types: Series', function() {
       expect(s.data.keySeq().first()).to.equal(6);
     });
   });
+
+  describe('#addPoints()', function() {
+    const s = new Series(pointsObj);
+    const s2 = s.addPoints(morePayloads);
+    it('Returns a copy', function() {
+      expect(s)
+    })
+  })
 
 });

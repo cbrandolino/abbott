@@ -1,5 +1,13 @@
-import { Map, Record, Set } from 'immutable';
+import * as Extendable from "extendable-immutable";
+import { Record, Map, Set } from "immutable";
 import Point from './Point'
+
+const SeriesRecord = Record({
+  meta: null,
+  points: null,
+  data: null,
+  bands: null,
+})
 
 const Range = Record({ from: null, to: null });
 
@@ -20,7 +28,7 @@ const dataFromPoints = (points, bandDimension) =>
   points.map(p => (
     [ p[bandDimension], p ]));
 
-class Series extends Map {
+class Series extends Extendable.Map {
   constructor(
     { payloads, dimensions={}, pointOptions={} },
     options
@@ -29,35 +37,22 @@ class Series extends Map {
     const points = new pointsFromPayloads(payloads, meta);
     const data = new Map(dataFromPoints(points, meta.bandDimension));
     const bands = new Set();
-    super({meta, data, bands})
-    this.data = this.get('data');
+    return super({ meta, data, bands });
   }
 
   get data() {
-    this.get('data');
-  }  
-
-  get pointer() {
-    this.meta.get('pointer')
+    return this.get('data')
   }
-  get selectedFrom() {
-    this.meta.get('selectedFrom')
+  get points() {
+    return this.get('data')
   }
-  get selectedTo() {
-    this.meta.get('selectedTo')
+  get bands() {
+    return this.get('data')
   }
-}
 
-Series.prototype.addPayloads =(payloads) =>
-  this.addPoints(
-    pointsFromPayloads(payloads, this.meta, this.bands.size - 1));
-
-Series.prototype.addPoints = (newPoints) => {
-  const processedPoints = newPoints.map(p => (
-    [ p[this.meta.bandDimension], p ]));
-  const data = this.data.merge(processedPoints);
-  const bands = this.bands.union(processedPoints.map(it => it.band))
-  return this.merge({ data, bands })
+  addPoints(points) {
+    return this;
+  }
 }
 
 export default Series;
