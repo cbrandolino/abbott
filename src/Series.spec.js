@@ -20,11 +20,7 @@ const morePayloads = [
 const pointDimensions = {
   x: 'bucket',
   y: 'value',
-}
-
-const pointOptions = {
-  id: 10,
-}
+};
 
 const pointsObj = {
   payloads: pointPayloads,
@@ -52,10 +48,14 @@ describe('Types: Series', function() {
   });
 
   describe('#addPoints()', function() {
-    const s = new Series(pointsObj);
-    const s2 = s.addPoints(morePayloads);
-    it('Returns a copy', function() {
-      expect(s)
+    const s = new Series(pointsObj, {});
+    const s1 = s.load(morePayloads);
+    it('Adds the points passed to it', function() {
+      expect(s1.data.get(7).y).to.equal(14);
+    })
+    it('Does not modify the original Series', function() {
+      expect(s.data.size).to.equal(2);
+      expect(s1.data.size).to.equal(3);
     })
   })
 
