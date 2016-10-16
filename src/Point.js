@@ -4,7 +4,6 @@ const defaultDimensions = {
   z: 'z',
 }
 
-
 const computeDimension = function(obj, name) {
   return (typeof obj.dimensionFns[name] === 'string') ?
     obj.meta.payload[obj.dimensionFns[name]] :
@@ -14,8 +13,8 @@ const computeDimension = function(obj, name) {
 class Point {
 
   constructor(
-    id, payload, dimensions, 
-    { merge=true, formatters={} } = {}
+    payload, dimensions,
+    { merge=true, formatters={}, id=null } = {}
   ) {
 
     this.prepareDimensions(dimensions, merge);
