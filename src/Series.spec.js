@@ -9,17 +9,17 @@ import Point from './Point';
 
 
 const pointPayloads = [
-  { bucket: 3, value: 6 },
-  { bucket: 5, value: 10 },
+  { myBandKey: 3, value: 6 },
+  { myBandKey: 5, value: 10 },
 ];
 
 const morePayloads = [
-  { bucket: 7, value: 14 },
-  { bucket: 1, value: 2 },
+  { myBandKey: 7, value: 14 },
+  { myBandKey: 1, value: 2 },
 ];
 
 const pointDimensions = {
-  x: 'bucket',
+  x: 'myBandKey',
   y: 'value',
 };
 
@@ -41,9 +41,9 @@ describe('Types: Series', function() {
     });
   });
 
-  describe('constructor: .data with custom bandDimension', function() {
-    const s1 = new Series(pointsObj, { bandDimension: 'y' });
-    it('sets keys to dimension specified in bandDimension', function() {
+  describe('constructor: .data with custom myBandKeyDimension', function() {
+    const s1 = new Series(pointsObj, { myBandKeyDimension: 'y' });
+    it('sets keys to dimension specified in myBandKeyDimension', function() {
       expect(s1.keySeq().first()).to.equal(6);
     });
   });
