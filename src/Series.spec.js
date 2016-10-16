@@ -15,6 +15,7 @@ const pointPayloads = [
 
 const morePayloads = [
   { bucket: 7, value: 14 },
+  { bucket: 1, value: 2 },
 ];
 
 const pointDimensions = {
@@ -28,34 +29,33 @@ const pointsObj = {
 }
 
 describe('Types: Series', function() {
+  const s = new Series(pointsObj, {});
 
   describe('constructor: .data with default options', function() {
-    const s = new Series(pointsObj, {});
     it('initializes .data as an Map of points', function() {
-      expect(s.data).to.be.instanceOf(Map);
-      expect(s.data.first()).to.be.instanceOf(Point);
+      expect(s).to.be.instanceOf(Map);
+      expect(s.first()).to.be.instanceOf(Point);
     });
     it('sets keys to x dimension of points', function() {
-      expect(s.data.keySeq().first()).to.equal(3);
+      expect(s.keySeq().first()).to.equal(3);
     });
   });
 
   describe('constructor: .data with custom bandDimension', function() {
-    const s = new Series(pointsObj, { bandDimension: 'y' });
+    const s1 = new Series(pointsObj, { bandDimension: 'y' });
     it('sets keys to dimension specified in bandDimension', function() {
-      expect(s.data.keySeq().first()).to.equal(6);
+      expect(s1.keySeq().first()).to.equal(6);
     });
   });
 
   describe('#addPoints()', function() {
-    const s = new Series(pointsObj, {});
     const s1 = s.load(morePayloads);
     it('Adds the points passed to it', function() {
-      expect(s1.data.get(7).y).to.equal(14);
+      expect(s1.get(7).y).to.equal(14);
     })
     it('Does not modify the original Series', function() {
-      expect(s.data.size).to.equal(2);
-      expect(s1.data.size).to.equal(3);
+      expect(s.size).to.equal(2);
+      expect(s1.size).to.equal(4);
     })
   })
 

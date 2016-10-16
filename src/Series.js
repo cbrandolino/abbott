@@ -24,7 +24,6 @@ const dataFromPayloads = (payloads, meta ) => {
   const points = payloads.map(p =>
     new Point(p, meta.dimensions, meta.pointOptions))
   return dataFromPoints(points, meta.bandDimension);
-
 }
 
 class Series extends Extendable.Map {
@@ -35,24 +34,15 @@ class Series extends Extendable.Map {
     const meta = new Meta({payloads, dimensions, pointOptions, ...options});
     const data = new dataFromPayloads(payloads, meta);
     const bands = new Set();
-    return super({ meta, data, bands });
+    super(data);
+    this.meta = meta;
+    this.banda = bands;
   }
 
   load(payload) {
-    return this.merge({ 
-      data: this.data.merge(dataFromPayloads(payload, this.meta)),
-    });
+    return this.merge(dataFromPayloads(payload, this.meta));
   }
 
-  get data() {
-    return this.get('data')
-  }
-  get bands() {
-    return this.get('bands')
-  }
-  get meta() {
-    return this.get('meta')
-  }
 }
 
 export default Series;
