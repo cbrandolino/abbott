@@ -37,14 +37,14 @@ describe('Types: Series', function() {
       expect(s.first()).to.be.instanceOf(Point);
     });
     it('sets keys to x dimension of points', function() {
-      expect(s.first().x).to.equal(5);
+      expect(s.first().x).to.equal(3);
     });
   });
 
   describe('constructor: .data with custom bandDimension', function() {
     const s1 = new Series(pointsObj, { bandDimension: 'y' });
     it('sets keys to dimension specified in bandDimension', function() {
-      expect(s1.toArray()[0].x).to.equal(5);
+      expect(s1.toArray()[0].x).to.equal(3);
     });
   });
 
@@ -52,11 +52,11 @@ describe('Types: Series', function() {
     const s1 = s.load(morePayloads);
     it('Adds the points passed to it', function() {
       expect(s1.size).to.equal(4);
-    })
+    });
     it('Does not modify the original Series', function() {
       expect(s.size).to.equal(2);
       expect(s1.size).to.equal(4);
-    })
+    });
   })
 
 });
