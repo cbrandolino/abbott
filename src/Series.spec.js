@@ -28,35 +28,42 @@ const pointsObj = {
   dimensions: pointDimensions,
 }
 
-describe('Types: Series', function() {
+describe('Types: Series', () => {
   const s = new Series(pointsObj, {});
 
-  describe('constructor: .data with default options', function() {
-    it('initializes .data as an Map of points', function() {
+  describe('constructor: .data with default options', () => {
+    it('initializes .data as an Map of points', () => {
       expect(s).to.be.instanceOf(Map);
       expect(s.first()).to.be.instanceOf(Point);
     });
-    it('sets keys to x dimension of points', function() {
+    it('sets keys to x dimension of points', () => {
       expect(s.first().x).to.equal(3);
     });
   });
 
-  describe('constructor: .data with custom bandDimension', function() {
+  describe('constructor: .data with custom bandDimension', () => {
     const s1 = new Series(pointsObj, { bandDimension: 'y' });
-    it('sets keys to dimension specified in bandDimension', function() {
+    it('sets keys to dimension specified in bandDimension', () => {
       expect(s1.toArray()[0].x).to.equal(3);
     });
   });
 
-  describe('#addPoints()', function() {
+  describe('#addPoints()', () => {
     const s1 = s.load(morePayloads);
-    it('Adds the points passed to it', function() {
+    it('Adds the points passed to it', () => {
       expect(s1.size).to.equal(4);
     });
-    it('Does not modify the original Series', function() {
+    it('Does not modify the original Series', () => {
       expect(s.size).to.equal(2);
       expect(s1.size).to.equal(4);
     });
-  })
+  });
+
+  describe('#selected()', () => {
+
+    it("Includes the whole series at the start", () => {
+      expect(s.selected().size).to.equal(2);
+    })
+  });
 
 });

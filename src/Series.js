@@ -1,16 +1,17 @@
 import * as Extendable from "extendable-immutable";
-import { Record, OrderedMap } from "immutable";
+import { Record, OrderedMap, Map } from "immutable";
 import Point from './Point';
-
-const Range = Record({ from: null, to: null });
 
 const Meta = Record({
   bandDimension: "x",
-  pointer: null,
-  selected: Range,
   payloads: [],
   dimensions: {},
   pointOptions: {},
+});
+
+const Chunk = Record({
+  from: 0,
+  to: 0,
 });
 
 const dataFromPoints = (points, bandDimension) => {
@@ -30,9 +31,21 @@ class Series extends Extendable.Map {
     { payloads, dimensions={}, pointOptions={} },
     settings
   ) {
-    const meta = new Meta({payloads, dimensions, pointOptions}).merge(settings);
+    const meta = new Meta({ dimensions, pointOptions }).merge(settings);
     const data = dataFromPayloads(payloads, meta);
-    return Object.assign(super(data), { meta });
+    super(data);
+    this.meta = meta;
+    this.selection = new Chunk({ to: this.size });
+    this.pointers = new Map();
+  }
+
+  select(limits) {
+    this.selection = new Chunk(limits);
+    return this.selected;
+  }
+
+  selected() {
+    return this.entrySeq().slice(this.selection.from, this.selection.to)
   }
 
   load(payload) {
