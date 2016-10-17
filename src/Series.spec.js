@@ -2,15 +2,15 @@
 /* eslint-disable prefer-arrow-callback */
 /* eslint-disable max-nested-callbacks */
 /* eslint-disable no-unused-expressions */
-import { Map } from 'immutable';
+import { Map, Set } from 'immutable';
 import { expect } from 'chai';
 import Series from './Series';
 import Point from './Point';
 
 
 const pointPayloads = [
-  { myBandKey: 3, value: 6 },
   { myBandKey: 5, value: 10 },
+  { myBandKey: 3, value: 6 },
 ];
 
 const morePayloads = [
@@ -37,21 +37,21 @@ describe('Types: Series', function() {
       expect(s.first()).to.be.instanceOf(Point);
     });
     it('sets keys to x dimension of points', function() {
-      expect(s.keySeq().first()).to.equal(3);
+      expect(s.first().x).to.equal(5);
     });
   });
 
-  describe('constructor: .data with custom myBandKeyDimension', function() {
-    const s1 = new Series(pointsObj, { myBandKeyDimension: 'y' });
-    it('sets keys to dimension specified in myBandKeyDimension', function() {
-      expect(s1.keySeq().first()).to.equal(6);
+  describe('constructor: .data with custom bandDimension', function() {
+    const s1 = new Series(pointsObj, { bandDimension: 'y' });
+    it('sets keys to dimension specified in bandDimension', function() {
+      expect(s1.toArray()[0].x).to.equal(5);
     });
   });
 
   describe('#addPoints()', function() {
     const s1 = s.load(morePayloads);
     it('Adds the points passed to it', function() {
-      expect(s1.get(7).y).to.equal(14);
+      expect(s1.size).to.equal(4);
     })
     it('Does not modify the original Series', function() {
       expect(s.size).to.equal(2);

@@ -1,5 +1,5 @@
 import * as Extendable from "extendable-immutable";
-import { Record, Map, Set } from "immutable";
+import { Record, OrderedMap, Set } from "immutable";
 import Point from './Point';
 
 const Range = Record({ from: null, to: null });
@@ -13,35 +13,34 @@ const Meta = Record({
   pointOptions: {},
 });
 
-
 const dataFromPoints = (points, bandDimension) => {
+  console.log('datafrompoints points', points)
   const bandPoints = points.map(p => (
-      [ p[bandDimension], p ]));
-  return new Map(bandPoints);
+    [ p[bandDimension], p ]));
+  return new OrderedMap(bandPoints).sortBy(it => it.bandDimension);
 }
 
-const dataFromPayloads = (payloads, meta ) => {
+const dataFromPayloads = (payloads, { dimensions, pointOptions, bandDimension}) => {
   const points = payloads.map(p =>
-    new Point(p, meta.dimensions, meta.pointOptions))
-  return dataFromPoints(points, meta.bandDimension);
+    new Point(p, dimensions, pointOptions))
+  return dataFromPoints(points, bandDimension);
 }
 
 class Series extends Extendable.Map {
-  constructor(
+  constructor(              
     { payloads, dimensions={}, pointOptions={} },
-    options
+    settings
   ) {
-    const meta = new Meta({payloads, dimensions, pointOptions, ...options});
+    const meta = new Meta({payloads, dimensions, pointOptions}).merge(settings);
     const data = new dataFromPayloads(payloads, meta);
-    const bands = new Set();
-    super(data);
-    this.meta = meta;
-    this.banda = bands;
+    return Object.assign(super(data), { meta });
   }
 
   load(payload) {
-    return this.merge(dataFromPayloads(payload, this.meta));
+    return this.merge(dataFromPayloads(payload, this.meta))
+      .sortBy(it => it[this.get(this.meta.bandDimension)]);
   }
+
 
 }
 
