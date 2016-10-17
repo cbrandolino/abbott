@@ -15,7 +15,7 @@ const id = "Pointy McPointface";
 describe('Types: Point', function() {
 
   describe('Meta', function() {
-    const p = new Point(id, orderlyPayload);
+    const p = new Point(orderlyPayload, {}, { id });
     it('gets copy of payload', function() {
       expect(p.payload).to.eql(orderlyPayload);
       const wontChangeProp = p.payload;
@@ -29,7 +29,7 @@ describe('Types: Point', function() {
 
   describe('Dimension getters', function() {
     describe('Default dimensions', function() {
-      const p = new Point(id, orderlyPayload);
+      const p = new Point(orderlyPayload);
       it('exposes default dimensions', function() {
         expect(p.x).to.equal(2);
       });
@@ -42,7 +42,7 @@ describe('Types: Point', function() {
     });
     
     describe('Custom dimension transformers', function() {
-      const p = new Point(id, fancyPayload, fancyDimensions);
+      const p = new Point(fancyPayload, fancyDimensions);
       it('Works with keys', function() {
         expect(p.x).to.equal(1);
       });
@@ -53,7 +53,7 @@ describe('Types: Point', function() {
         expect(p.y).to.equal(1);
       });
       it('mixes and matches default and custom dimensions', function() {
-        expect((new Point(id, mixedPayload, { x: (it) => (it.halfX * 2) })).x).to.equal(2);
+        expect((new Point(mixedPayload, { x: (it) => (it.halfX * 2) })).x).to.equal(2);
       })
     });
   });
