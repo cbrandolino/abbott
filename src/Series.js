@@ -10,8 +10,8 @@ const Meta = Record({
 });
 
 const Chunk = Record({
-  from: 0,
-  to: 0,
+  start: null,
+  end: null,
 });
 
 const dataFromPoints = (points, bandDimension) => {
@@ -35,8 +35,13 @@ class Series extends Extendable.Map {
     const data = dataFromPayloads(payloads, meta);
     super(data);
     this.meta = meta;
-    this.selection = new Chunk({ to: this.size });
+    this.selection = new Chunk();
     this.pointers = new Map();
+  }
+
+  __wrapImmutable(...args) {
+    const res = super.__wrapImmutable(...args);
+    return Object.assign(res, this)
   }
 
   select(limits) {
@@ -45,12 +50,14 @@ class Series extends Extendable.Map {
   }
 
   selected() {
-    return this.entrySeq().slice(this.selection.from, this.selection.to)
+    const start = this.selection.start === null ? 0 : this.selection.start;
+    const end = this.selection.end === null ? this.size : this.selection.end;
+    return this.entrySeq().slice(start, end);
   }
 
   load(payload) {
-    return this.merge(dataFromPayloads(payload, this.meta))
-      .sortBy(it => it[this.get(this.meta.bandDimension)]);
+    const newMap = this.merge(dataFromPayloads(payload, this.meta))
+    return Object.assign({}, this, newMap);
   }
 }
 

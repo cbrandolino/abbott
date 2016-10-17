@@ -18,6 +18,9 @@ const morePayloads = [
   { myBandKey: 1, value: 2 },
 ];
 
+const stillMore = [
+  { myBandKey: 9, value: 18 },
+];
 const pointDimensions = {
   x: 'myBandKey',
   y: 'value',
@@ -49,7 +52,7 @@ describe('Types: Series', () => {
   });
 
   describe('#addPoints()', () => {
-    const s1 = s.load(morePayloads);
+    const s1 = s.load(morePayloads)
     it('Adds the points passed to it', () => {
       expect(s1.size).to.equal(4);
     });
@@ -60,10 +63,16 @@ describe('Types: Series', () => {
   });
 
   describe('#selected()', () => {
-
     it("Includes the whole series at the start", () => {
       expect(s.selected().size).to.equal(2);
-    })
+    });
+    it("Changes the selection to the start and \
+        end of the new series when updating", () => {
+        expect(s.load(morePayloads).size).to.equal(4)
+    });
   });
 
+  describe('#select()', () => {
+    it("Chages the selected range")
+  });
 });
