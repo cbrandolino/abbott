@@ -33,9 +33,13 @@ class Series extends Collection {
   }
 
   static dataFromPayloads(payloads, { dimensions, pointOptions, bandDimension}) {
-    const points = payloads.map(p =>
-      new Point(p, dimensions, pointOptions))
+    const points = this.pointsFromPayloads(payloads, dimensions, pointOptions)
     return this.dataFromPoints(points, bandDimension);
+  }
+
+  static pointsFromPayloads(payloads, dimensions, pointOptions) {
+    return payloads.map(p =>
+      new Point(p, dimensions, pointOptions))
   }
 
   constructor({ meta, data, selection, pointers}) {
