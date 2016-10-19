@@ -1,6 +1,6 @@
-import * as Extendable from "extendable-immutable";
 import { Record, OrderedMap, Map } from "immutable";
 import Point from './Point';
+import Collection from './Collection'
 
 const Meta = Record({
   bandDimension: "x",
@@ -26,39 +26,42 @@ const dataFromPayloads = (payloads, { dimensions, pointOptions, bandDimension}) 
   return dataFromPoints(points, bandDimension);
 }
 
-class Series extends Extendable.Map {
-  constructor(              
-    { payloads, dimensions={}, pointOptions={} },
-    settings
-  ) {
-    const meta = new Meta({ dimensions, pointOptions }).merge(settings);
-    const data = dataFromPayloads(payloads, meta);
-    super(data);
-    this.meta = meta;
-    this.selection = new Chunk();
-    this.pointers = new Map();
+class Series extends Collection {
+
+  static fromPayloads(
+    { payloads, dimensions={}, pointOptions={} }, settings) {
+    const meta = new Meta({ dimensions, pointOptions }).merge(settings)
+    return new Series({
+      meta: meta,
+      data: dataFromPayloads(payloads, meta),
+      selection: new Chunk(),
+    });
   }
 
-  __wrapImmutable(...args) {
-    const res = super.__wrapImmutable(...args);
-    return Object.assign(res, this)
+  constructor({ meta, data, selection, pointers}) {
+    super({ meta, data, selection, pointers});
   }
 
-  select(limits) {
-    this.selection = new Chunk(limits);
-    return this.selected;
-  }
-
-  selected() {
+  get selected() {
     const start = this.selection.start === null ? 0 : this.selection.start;
     const end = this.selection.end === null ? this.size : this.selection.end;
-    return this.entrySeq().slice(start, end);
+    return new OrderedMap(this.data.entrySeq().slice(start, end));
+  }
+
+  at(band, onlySelection=false) {
+    const source = onlySelection ? this.selected : this.data;
+    return source.get(band, new Point());
+  }
+
+  select(start, end) {
+    return this.copyWith({ selection: new Chunk({ start, end })});
   }
 
   load(payload) {
-    const newMap = this.merge(dataFromPayloads(payload, this.meta))
-    return Object.assign({}, this, newMap);
+    const data = this.data.merge(dataFromPayloads(payload, this.meta));
+    return this.copyWith({ data });
   }
+
 }
 
 export default Series;
