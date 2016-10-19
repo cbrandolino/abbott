@@ -15,7 +15,8 @@ const Chunk = Record({
 });
 
 class SeriesCollection extends Collection {
-  static fromPayloads(payloads, pointOptions) {
+  static fromPayloads(payloads, { pointDimensions, bandDimension }) {
+    console.log(bandDimension)
     return new SeriesCollection({});
   }
   constructor({ meta, data, selection, pointers}) {

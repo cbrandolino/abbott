@@ -14,18 +14,6 @@ const Chunk = Record({
   end: null,
 });
 
-const dataFromPoints = (points, bandDimension) => {
-  const bandPoints = points.map(p => (
-    [ p[bandDimension], p ]));
-  return new OrderedMap(bandPoints).sortBy(it => it[bandDimension]);
-}
-
-const dataFromPayloads = (payloads, { dimensions, pointOptions, bandDimension}) => {
-  const points = payloads.map(p =>
-    new Point(p, dimensions, pointOptions))
-  return dataFromPoints(points, bandDimension);
-}
-
 class Series extends Collection {
 
   static fromPayloads(
@@ -33,9 +21,21 @@ class Series extends Collection {
     const meta = new Meta({ dimensions, pointOptions }).merge(settings)
     return new Series({
       meta: meta,
-      data: dataFromPayloads(payloads, meta),
+      data: this.dataFromPayloads(payloads, meta),
       selection: new Chunk(),
     });
+  }
+
+  static dataFromPoints(points, bandDimension) {
+    const bandPoints = points.map(p => (
+      [ p[bandDimension], p ]));
+    return new OrderedMap(bandPoints).sortBy(it => it[bandDimension]);
+  }
+
+  static dataFromPayloads(payloads, { dimensions, pointOptions, bandDimension}) {
+    const points = payloads.map(p =>
+      new Point(p, dimensions, pointOptions))
+    return this.dataFromPoints(points, bandDimension);
   }
 
   constructor({ meta, data, selection, pointers}) {
@@ -59,7 +59,7 @@ class Series extends Collection {
   }
 
   load(payload) {
-    const data = this.data.merge(dataFromPayloads(payload, this.meta));
+    const data = this.data.merge(Series.dataFromPayloads(payload, this.meta));
     return this.copyWith({ data });
   }
 

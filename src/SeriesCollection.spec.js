@@ -32,9 +32,11 @@ const pointDimensions = {
   y: 'value',
 };
 
+const bandDimension = 'x';
+
 
 describe('Types: SeriesCollection', () => {
-  const c = SeriesCollection.fromPayloads(payloads, { pointDimensions });
+  const c = SeriesCollection.fromPayloads(payloads, { pointDimensions, bandDimension });
   describe('#fromPayloads()', () => {
     it('returns a SeriesCollection instance', () => {
       expect(c).to.be.instanceOf(SeriesCollection);
