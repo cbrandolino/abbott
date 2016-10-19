@@ -35,6 +35,9 @@ const pointDimensions = {
 
 describe('Types: SeriesCollection', () => {
   const c = SeriesCollection.fromPayloads(payloads, { pointDimensions });
-
-
+  describe('#fromPayloads()', () => {
+    it('returns a SeriesCollection instance', () => {
+      expect(c).to.be.instanceOf(SeriesCollection);
+    });
+  });
 });

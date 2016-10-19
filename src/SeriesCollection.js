@@ -2,12 +2,24 @@ import { Record, OrderedMap, Map } from "immutable";
 import Point from './Point';
 import Collection from './Collection'
 
+const Meta = Record({
+  bandDimension: "x",
+  payloads: [],
+  dimensions: {},
+  pointOptions: {},
+});
+
+const Chunk = Record({
+  start: null,
+  end: null,
+});
+
 class SeriesCollection extends Collection {
   static fromPayloads(payloads, pointOptions) {
-    return new SeriesCollection();
+    return new SeriesCollection({});
   }
-  constructor() {
-    super();
+  constructor({ meta, data, selection, pointers}) {
+    super({ meta, data, selection, pointers});
   }
 
 }
