@@ -42,6 +42,7 @@ class Series extends Collection {
     super({ meta, data, selection, pointers});
   }
 
+  // TODO: SLICE RIGHT
   get selected() {
     const start = this.selection.start === null ? 0 : this.selection.start;
     const end = this.selection.end === null ? this.size : this.selection.end;
