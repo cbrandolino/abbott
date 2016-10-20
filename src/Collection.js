@@ -1,5 +1,3 @@
-import { is } from 'immutable';
-
 class Collection {
 
   constructor(attributes) {
@@ -22,10 +20,17 @@ class Collection {
     return this.data.last();
   }
 
+  map(fn) {
+    return this.data.map(fn);
+  }
+
   fromSelection() {
     return this.copyWith({data: this.selected});
   }
 
+  toArray() {
+    return this.data.toArray();
+  }
 }
 
 export default Collection;

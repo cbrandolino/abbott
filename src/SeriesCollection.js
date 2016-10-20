@@ -10,18 +10,18 @@ class SeriesCollection extends Collection {
         payloads: it.payloads, 
         dimensions: pointDimensions,
       }, { bandDimension }));
+
+    return new SeriesCollection({ series });
+  }
+  constructor({ meta, series, selection, pointers }) {
     const bands = (new OrderedSet())
       .union(...series.map(it => it.data.keySeq()))
       .sort();
     const data = new OrderedMap(
       series.map(it => [it, it.addBands(bands)])
     );
-    return new SeriesCollection({ data });
+    super({ meta, data, bands, selection, pointers});
   }
-  constructor({ meta, data, selection, pointers }) {
-    super({ meta, data, selection, pointers});
-  }
-
   at(band) {
     return this.data.map((it) => it.at(band));
   }
