@@ -1,21 +1,15 @@
 import { OrderedMap, Map, OrderedSet } from 'immutable';
-import { Meta, Chunk } from './records'; 
 import Point from './Point';
 import Collection from './Collection'
 
 class Series extends Collection {
 
-  static fromPayloads(
-    { payloads, dimensions={}, pointOptions={} }, 
-    settings
-  ) {
-    const meta = new Meta({ 
-      dimensions: new Map(dimensions), 
-      pointOptions: new Map(pointOptions)}).merge(settings);
+  static fromPayloads(payloads, attributes, dimensions, pointOptions={}) {
     return new Series({
-      meta: meta,
-      data: this.dataFromPayloads(payloads, meta),
-      selection: new Chunk(),
+      attributes: new Map(attributes),
+      data: this.dataFromPayloads(payloads, dimensions, pointOptions),
+      dimensions: new Map(dimensions),
+      pointOptions: new Map(pointOptions),
     });
   }
 
@@ -25,18 +19,19 @@ class Series extends Collection {
     return new OrderedMap(bandPoints).sortBy(it => it.x);
   }
 
-  static dataFromPayloads(payloads, { dimensions, pointOptions }) {
+  static dataFromPayloads(payloads, dimensions, pointOptions) {
     const points = this.pointsFromPayloads(payloads, dimensions, pointOptions)
     return this.dataFromPoints(points);
   }
 
   static pointsFromPayloads(payloads, dimensions, pointOptions) {
     return payloads.map(p =>
-      new Point(p, dimensions.toObject(), pointOptions.toObject()))
+      new Point(p, dimensions, pointOptions))
   }
 
-  constructor({ meta, data, pointers}) {
-    super({ meta, data: data.sortBy((v, k) => k), pointers});
+  constructor({ data, attributes, dimensions, pointOptions }){
+    const sortedData = data.sortBy((v, k) => k);
+    super({ data: sortedData, attributes, dimensions, pointOptions });
   }
 
   // TODO: SLICE RIGHT
@@ -55,10 +50,10 @@ class Series extends Collection {
     if (!difference.size) {
       return this.copyWith({});
     }
-    const y = this.meta.pointOptions.dummyValue || 0;
+    const y = this.pointOptions.dummyValue || 0;
     const newPoints = difference.map(it => [ 
       it, 
-      new Point({ id: it, dummy: true, x: it, y }, this.meta.dimensions),
+      new Point({ id: it, dummy: true, x: it, y }, this.dimensions),
     ]);
     return this.merge(newPoints);
   } 
@@ -69,7 +64,7 @@ class Series extends Collection {
   }
 
   loadPayloads(payloads) {
-    return this.merge(Series.dataFromPayloads(payloads, this.meta));
+    return this.merge(Series.dataFromPayloads(payloads, this.dimensions, this.pointOptions));
   }
 
   merge(newData) {

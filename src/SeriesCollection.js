@@ -1,5 +1,4 @@
-import { Record, OrderedMap, Map, List, OrderedSet } from "immutable";
-import Point from './Point';
+import { OrderedMap, OrderedSet } from "immutable";
 import Collection from './Collection';
 import Series from './Series';
 
@@ -13,14 +12,13 @@ class SeriesCollection extends Collection {
 
     return new SeriesCollection({ series });
   }
-  constructor({ meta, series, selection, pointers }) {
+  constructor({ meta, series }) {
     const bands = (new OrderedSet())
       .union(...series.map(it => it.data.keySeq()))
       .sort();
     const data = new OrderedMap(
-      series.map(it => [it, it.addBands(bands)])
-    );
-    super({ meta, data, bands, selection, pointers});
+      series.map(it => [it, it.addBands(bands)]));
+    super({ meta, data, bands });
   }
   at(band) {
     return this.data.map((it) => it.at(band));

@@ -7,6 +7,9 @@ import { expect } from 'chai';
 import Series from './Series';
 import Point from './Point';
 
+const seriesAttributes = {
+  id: 'GOOGL',
+}
 
 const pointPayloads = [
   { myBandKey: 5, value: 10 },
@@ -23,23 +26,12 @@ const pointDimensions = {
   y: 'value',
 };
 
-const pointsObj = {
-  payloads: pointPayloads,
-  dimensions: pointDimensions,
-}
-
 const fancyPayloads = [{ myX: 1, doubleY: 2 }];
 const fancyDimensions = { x: 'myX', y: (it) => (it.doubleY / 2) };
-const fancyObject = {
-  payloads: fancyPayloads,
-  dimensions: fancyDimensions,
-
-}
-
 
 describe('Types: Series', () => {
 
-  const s = Series.fromPayloads(pointsObj, {});
+  const s = Series.fromPayloads(pointPayloads, seriesAttributes, pointDimensions);
 
   describe('#fromPayloads()', () => {
     it('returns a series', () => {
@@ -53,7 +45,7 @@ describe('Types: Series', () => {
       expect(s.data.first().x).to.equal(3);
     });
     it('supports fancy transforms for dimensions', () => {
-      const fancyS = Series.fromPayloads(fancyObject)
+      const fancyS = Series.fromPayloads(fancyPayloads, seriesAttributes, fancyDimensions)
       expect(fancyS.data.first().x).to.equal(1);
       expect(fancyS.data.first().y).to.equal(1);
     })
