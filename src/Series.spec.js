@@ -97,10 +97,16 @@ describe('Types: Series', () => {
     });
   });
 
-  describe('#bands', () => {
+  describe('#bands, #addBands()', () => {
+    const s1 = s.addBands(OrderedSet.of(11));
     it('Provides getter for current bands', () => {
       expect(s.bands).to.eql(OrderedSet.of(3, 5));
-    })
+    });
+    it('Adds dummy points in empty bands through #addBands()', () => {
+      expect(s1.size).to.equal(3);
+      expect(s1.at(11).y).to.equal(0);
+    });
+
   });
 
 });

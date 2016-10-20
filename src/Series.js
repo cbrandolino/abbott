@@ -19,15 +19,15 @@ class Series extends Collection {
     });
   }
 
-  static dataFromPoints(points, bandDimension) {
+  static dataFromPoints(points) {
     const bandPoints = points.map(p => (
-      [ p[bandDimension], p ]));
-    return new OrderedMap(bandPoints).sortBy(it => it[bandDimension]);
+      [ p.x, p ]));
+    return new OrderedMap(bandPoints).sortBy(it => it.x);
   }
 
-  static dataFromPayloads(payloads, { dimensions, pointOptions, bandDimension}) {
+  static dataFromPayloads(payloads, { dimensions, pointOptions }) {
     const points = this.pointsFromPayloads(payloads, dimensions, pointOptions)
-    return this.dataFromPoints(points, bandDimension);
+    return this.dataFromPoints(points);
   }
 
   static pointsFromPayloads(payloads, dimensions, pointOptions) {
@@ -50,12 +50,17 @@ class Series extends Collection {
     return OrderedSet.fromKeys(this.data);
   }
 
-  set bands(bands) {
+  addBands(bands) {
     const difference = bands.subtract(this.bands);
-    if (difference.size) {
-
+    if (!difference.size) {
+      return this.copyWith({});
     }
-    return this.copyWith({});
+    const y = this.meta.pointOptions.dummyValue || 0;
+    const newPoints = difference.map(it => [ 
+      it, 
+      new Point({ id: it, dummy: true, x: it, y }, {}),
+    ]);
+    return this.merge(newPoints);
   } 
 
   at(band, onlySelection=false) {
