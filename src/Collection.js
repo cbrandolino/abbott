@@ -28,6 +28,9 @@ class Collection {
     return this.copyWith({data: this.selected});
   }
 
+  toArray() {
+    return this.data.toArray();
+  }
 }
 
 export default Collection;
