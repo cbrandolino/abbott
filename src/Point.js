@@ -16,7 +16,6 @@ class Point {
     payload, dimensions,
     { merge=true, formatters={}, id=null } = {}
   ) {
-
     this.prepareDimensions(dimensions, merge);
     this.meta = { id, payload };
     this.formatters = formatters;

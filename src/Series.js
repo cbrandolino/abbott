@@ -1,64 +1,86 @@
-import * as Extendable from "extendable-immutable";
-import { Record, OrderedMap, Map } from "immutable";
+import { OrderedMap, Map, OrderedSet } from 'immutable';
+import { Meta, Chunk } from './records'; 
 import Point from './Point';
+import Collection from './Collection'
 
-const Meta = Record({
-  bandDimension: "x",
-  payloads: [],
-  dimensions: {},
-  pointOptions: {},
-});
+class Series extends Collection {
 
-const Chunk = Record({
-  start: null,
-  end: null,
-});
-
-const dataFromPoints = (points, bandDimension) => {
-  const bandPoints = points.map(p => (
-    [ p[bandDimension], p ]));
-  return new OrderedMap(bandPoints).sortBy(it => it[bandDimension]);
-}
-
-const dataFromPayloads = (payloads, { dimensions, pointOptions, bandDimension}) => {
-  const points = payloads.map(p =>
-    new Point(p, dimensions, pointOptions))
-  return dataFromPoints(points, bandDimension);
-}
-
-class Series extends Extendable.Map {
-  constructor(              
-    { payloads, dimensions={}, pointOptions={} },
+  static fromPayloads(
+    { payloads, dimensions={}, pointOptions={} }, 
     settings
   ) {
-    const meta = new Meta({ dimensions, pointOptions }).merge(settings);
-    const data = dataFromPayloads(payloads, meta);
-    super(data);
-    this.meta = meta;
-    this.selection = new Chunk();
-    this.pointers = new Map();
+    const meta = new Meta({ 
+      dimensions: new Map(dimensions), 
+      pointOptions: new Map(pointOptions)});
+    return new Series({
+      meta: meta,
+      data: this.dataFromPayloads(payloads, meta),
+      selection: new Chunk(),
+    });
   }
 
-  __wrapImmutable(...args) {
-    const res = super.__wrapImmutable(...args);
-    return Object.assign(res, this)
+  static dataFromPoints(points) {
+    const bandPoints = points.map(p => (
+      [ p.x, p ]));
+    return new OrderedMap(bandPoints).sortBy(it => it.x);
   }
 
-  select(limits) {
-    this.selection = new Chunk(limits);
-    return this.selected;
+  static dataFromPayloads(payloads, { dimensions, pointOptions }) {
+    const points = this.pointsFromPayloads(payloads, dimensions, pointOptions)
+    return this.dataFromPoints(points);
   }
 
-  selected() {
+  static pointsFromPayloads(payloads, dimensions, pointOptions) {
+    return payloads.map(p =>
+      new Point(p, dimensions.toObject(), pointOptions.toObject()))
+  }
+
+  constructor({ meta, data, selection, pointers}) {
+    super({ meta, data, selection, pointers});
+  }
+
+  // TODO: SLICE RIGHT
+  get selected() {
     const start = this.selection.start === null ? 0 : this.selection.start;
     const end = this.selection.end === null ? this.size : this.selection.end;
-    return this.entrySeq().slice(start, end);
+    return new OrderedMap(this.data.entrySeq().slice(start, end));
   }
 
-  load(payload) {
-    const newMap = this.merge(dataFromPayloads(payload, this.meta))
-    return Object.assign({}, this, newMap);
+  get bands() {
+    return OrderedSet.fromKeys(this.data);
   }
+
+  addBands(bands) {
+    const difference = bands.subtract(this.bands);
+    if (!difference.size) {
+      return this.copyWith({});
+    }
+    const y = this.meta.pointOptions.dummyValue || 0;
+    const newPoints = difference.map(it => [ 
+      it, 
+      new Point({ id: it, dummy: true, x: it, y }, {}),
+    ]);
+    return this.merge(newPoints);
+  } 
+
+  at(band, onlySelection=false) {
+    const source = onlySelection ? this.selected : this.data;
+    return source.get(band, new Point());
+  }
+
+  select(start, end) {
+    return this.copyWith({ selection: new Chunk({ start, end })});
+  }
+
+  loadPayloads(payloads) {
+    return this.merge(Series.dataFromPayloads(payloads, this.meta));
+  }
+
+  merge(newData) {
+    const data = this.data.merge(newData);
+    return this.copyWith({ data });
+  }
+
 }
 
 export default Series;
