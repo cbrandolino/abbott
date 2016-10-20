@@ -27,7 +27,6 @@
     "no-sequences":               "error",
     "no-undef":                   "error",
     "no-undefined":               "error",
-    "no-underscore-dangle":       "error",
     "no-unused-expressions":      "error",
     "no-unused-vars":             "error",
     "no-use-before-define":       "error",
