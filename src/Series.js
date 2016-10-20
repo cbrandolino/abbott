@@ -35,8 +35,8 @@ class Series extends Collection {
       new Point(p, dimensions.toObject(), pointOptions.toObject()))
   }
 
-  constructor({ meta, data, selection, pointers}) {
-    super({ meta, data: data.sortBy((v, k) => k), selection, pointers});
+  constructor({ meta, data, pointers}) {
+    super({ meta, data: data.sortBy((v, k) => k), pointers});
   }
 
   // TODO: SLICE RIGHT
@@ -66,10 +66,6 @@ class Series extends Collection {
   at(band, onlySelection=false) {
     const source = onlySelection ? this.selected : this.data;
     return source.get(band, new Point());
-  }
-
-  select(start, end) {
-    return this.copyWith({ selection: new Chunk({ start, end })});
   }
 
   loadPayloads(payloads) {

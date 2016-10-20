@@ -20,8 +20,8 @@ class Collection {
     return this.data.last();
   }
 
-  [Symbol.iterator]() {
-    return this.data.entries();
+  map(fn) {
+    return this.data.map(fn);
   }
 
   fromSelection() {
