@@ -1,5 +1,3 @@
-import { is } from 'immutable';
-
 class Collection {
 
   constructor(attributes) {
@@ -20,6 +18,10 @@ class Collection {
 
   last() {
     return this.data.last();
+  }
+
+  [Symbol.iterator]() {
+    return this.data.entries();
   }
 
   fromSelection() {
