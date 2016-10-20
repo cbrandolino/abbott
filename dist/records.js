@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:true});exports.Chunk=exports.Meta=undefined;var _immutable=require("immutable");var Meta=(0,_immutable.Record)({bandDimension:"x",payloads:[],dimensions:{},pointOptions:{}});var Chunk=(0,_immutable.Record)({start:null,end:null});exports.Meta=Meta;exports.Chunk=Chunk;
