@@ -1,18 +1,7 @@
-import { Record, OrderedMap, Map } from "immutable";
+import { OrderedMap } from 'immutable';
+import { Meta, Chunk } from './records'; 
 import Point from './Point';
 import Collection from './Collection'
-
-const Meta = Record({
-  bandDimension: "x",
-  payloads: [],
-  dimensions: {},
-  pointOptions: {},
-});
-
-const Chunk = Record({
-  start: null,
-  end: null,
-});
 
 class Series extends Collection {
 

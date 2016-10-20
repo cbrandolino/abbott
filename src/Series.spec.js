@@ -38,6 +38,7 @@ const fancyObject = {
 
 
 describe('Types: Series', () => {
+
   const s = Series.fromPayloads(pointsObj, {});
 
   describe('#fromPayloads()', () => {
