@@ -4,10 +4,10 @@ import Collection from './Collection'
 
 class Series extends Collection {
 
-  static fromPayloads(payloads, attributes, dimensions, pointOptions={}) {
+  static fromPayload(payload, attributes, dimensions, pointOptions={}) {
     return new Series({
       attributes: new Map(attributes),
-      data: this.dataFromPayloads(payloads, dimensions, pointOptions),
+      data: this.dataFrompayload(payload, dimensions, pointOptions),
       dimensions: new Map(dimensions),
       pointOptions: new Map(pointOptions),
     });
@@ -19,13 +19,13 @@ class Series extends Collection {
     return new OrderedMap(bandPoints).sortBy(it => it.x);
   }
 
-  static dataFromPayloads(payloads, dimensions, pointOptions) {
-    const points = this.pointsFromPayloads(payloads, dimensions, pointOptions)
+  static dataFrompayload(payload, dimensions, pointOptions) {
+    const points = this.pointsFrompayload(payload, dimensions, pointOptions)
     return this.dataFromPoints(points);
   }
 
-  static pointsFromPayloads(payloads, dimensions, pointOptions) {
-    return payloads.map(p =>
+  static pointsFrompayload(payload, dimensions, pointOptions) {
+    return payload.map(p =>
       new Point(p, dimensions, pointOptions))
   }
 
@@ -63,8 +63,8 @@ class Series extends Collection {
     return source.get(band, new Point());
   }
 
-  loadPayloads(payloads) {
-    return this.merge(Series.dataFromPayloads(payloads, this.dimensions, this.pointOptions));
+  loadpayload(payload) {
+    return this.merge(Series.dataFrompayload(payload, this.dimensions, this.pointOptions));
   }
 
   merge(newData) {
