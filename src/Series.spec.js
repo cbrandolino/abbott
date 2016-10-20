@@ -59,14 +59,6 @@ describe('Types: Series', () => {
     })
   });
 
-  describe('#select()', () => {
-    it('Chages the selected range', () => {
-      const s1 = s.select(1, 2);
-      expect(s.selected.size).to.equal(2);
-      expect(s1.selected.first().x).to.equal(5);
-    })
-  });
-
   describe('#at()', () => {
     it('Gets data for a given band', () => {
       expect(s.at(3).y).to.equal(6);
@@ -74,28 +66,7 @@ describe('Types: Series', () => {
     it('Gets an empty point when accessing nonexistant index', () => {
       expect(s.at(4)).to.eql(new Point());
     });
-    it('Only gets data from selection if such option is set', () => {
-      const s1 = s.select(1, 2).loadPayloads(morePayloads);
-      expect(s1.at(3, true)).to.eql(new Point());
-    })
   })
-
-  describe('#selected()', () => {
-    it('Includes the whole series at the start', () => {
-      expect(s.selected.size).to.equal(2);
-    });
-    it('Changes the selection to the start and \n\
-      end of the new series when updating', () => {
-      const s1 = s.loadPayloads(morePayloads);
-      expect(s1.selected.size).to.equal(4);
-
-    });
-    it('Does not change the selection to the start and \
-      end when a selection is already present', () => {
-      const s1 = s.select(1, 2).loadPayloads(morePayloads);
-      expect(s1.selected.size).to.equal(1);
-    });
-  });
 
   describe('#bands, #addBands()', () => {
     const s1 = s.addBands(OrderedSet.of(11));

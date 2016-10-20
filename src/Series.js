@@ -11,7 +11,7 @@ class Series extends Collection {
   ) {
     const meta = new Meta({ 
       dimensions: new Map(dimensions), 
-      pointOptions: new Map(pointOptions)});
+      pointOptions: new Map(pointOptions)}).merge(settings);
     return new Series({
       meta: meta,
       data: this.dataFromPayloads(payloads, meta),
@@ -35,8 +35,8 @@ class Series extends Collection {
       new Point(p, dimensions.toObject(), pointOptions.toObject()))
   }
 
-  constructor({ meta, data, selection, pointers}) {
-    super({ meta, data, selection, pointers});
+  constructor({ meta, data, pointers}) {
+    super({ meta, data: data.sortBy((v, k) => k), pointers});
   }
 
   // TODO: SLICE RIGHT
@@ -58,7 +58,7 @@ class Series extends Collection {
     const y = this.meta.pointOptions.dummyValue || 0;
     const newPoints = difference.map(it => [ 
       it, 
-      new Point({ id: it, dummy: true, x: it, y }, {}),
+      new Point({ id: it, dummy: true, x: it, y }, this.meta.dimensions),
     ]);
     return this.merge(newPoints);
   } 
@@ -66,10 +66,6 @@ class Series extends Collection {
   at(band, onlySelection=false) {
     const source = onlySelection ? this.selected : this.data;
     return source.get(band, new Point());
-  }
-
-  select(start, end) {
-    return this.copyWith({ selection: new Chunk({ start, end })});
   }
 
   loadPayloads(payloads) {
