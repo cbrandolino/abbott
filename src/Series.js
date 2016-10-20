@@ -11,7 +11,7 @@ class Series extends Collection {
   ) {
     const meta = new Meta({ 
       dimensions: new Map(dimensions), 
-      pointOptions: new Map(pointOptions) }).merge(new Map(settings))
+      pointOptions: new Map(pointOptions)});
     return new Series({
       meta: meta,
       data: this.dataFromPayloads(payloads, meta),

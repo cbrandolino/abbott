@@ -3,7 +3,9 @@
 /* eslint-disable max-nested-callbacks */
 /* eslint-disable no-unused-expressions */
 import { expect } from 'chai';
+import { OrderedMap } from 'immutable';
 import SeriesCollection from './SeriesCollection';
+import Series from './Series';
 
 const payloads = [
   {
@@ -38,5 +40,16 @@ describe('Types: SeriesCollection', () => {
     it('returns a SeriesCollection instance', () => {
       expect(c).to.be.instanceOf(SeriesCollection);
     });
+    it('contains a map of series as .data', () => {
+      expect(c.data).to.be.instanceOf(OrderedMap);
+      expect(c.data.first()).to.be.instanceOf(Series);
+    })
+  });
+  describe('#at()', () => {
+    it('returns a map with values from each series at the given band', () => {
+      expect(c.at(5).first().y).to.equal(10);
+      expect(c.at(5).last().y).to.equal(0);
+  
+    })
   });
 });
