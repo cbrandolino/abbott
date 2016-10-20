@@ -55,6 +55,7 @@ class Series extends Collection {
     if (difference.size) {
 
     }
+    return this.copyWith({});
   } 
 
   at(band, onlySelection=false) {
@@ -67,7 +68,11 @@ class Series extends Collection {
   }
 
   loadPayloads(payloads) {
-    const data = this.data.merge(Series.dataFromPayloads(payloads, this.meta));
+    return this.merge(Series.dataFromPayloads(payloads, this.meta));
+  }
+
+  merge(newData) {
+    const data = this.data.merge(newData);
     return this.copyWith({ data });
   }
 
