@@ -2,11 +2,8 @@
 /* eslint-disable prefer-arrow-callback */
 /* eslint-disable max-nested-callbacks */
 /* eslint-disable no-unused-expressions */
-import { Map, Set, Record } from 'immutable';
 import { expect } from 'chai';
 import SeriesCollection from './SeriesCollection';
-import Point from './Point';
-
 
 const payloads = [
   {

@@ -2,7 +2,7 @@
 /* eslint-disable prefer-arrow-callback */
 /* eslint-disable max-nested-callbacks */
 /* eslint-disable no-unused-expressions */
-import { Map, Set, Record, OrderedSet, Seq } from 'immutable';
+import { Map, OrderedSet } from 'immutable';
 import { expect } from 'chai';
 import Series from './Series';
 import Point from './Point';
@@ -75,7 +75,7 @@ describe('Types: Series', () => {
       expect(s.at(4)).to.eql(new Point());
     });
     it('Only gets data from selection if such option is set', () => {
-      const s1 = s.select(1, 2).load(morePayloads);
+      const s1 = s.select(1, 2).loadPayloads(morePayloads);
       expect(s1.at(3, true)).to.eql(new Point());
     })
   })
@@ -86,13 +86,13 @@ describe('Types: Series', () => {
     });
     it('Changes the selection to the start and \n\
       end of the new series when updating', () => {
-      const s1 = s.load(morePayloads);
+      const s1 = s.loadPayloads(morePayloads);
       expect(s1.selected.size).to.equal(4);
 
     });
     it('Does not change the selection to the start and \
       end when a selection is already present', () => {
-      const s1 = s.select(1, 2).load(morePayloads);
+      const s1 = s.select(1, 2).loadPayloads(morePayloads);
       expect(s1.selected.size).to.equal(1);
     });
   });

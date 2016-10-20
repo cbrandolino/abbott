@@ -6,7 +6,9 @@ import Collection from './Collection'
 class Series extends Collection {
 
   static fromPayloads(
-    { payloads, dimensions={}, pointOptions={} }, settings) {
+    { payloads, dimensions={}, pointOptions={} }, 
+    settings
+  ) {
     const meta = new Meta({ 
       dimensions: new Map(dimensions), 
       pointOptions: new Map(pointOptions) }).merge(new Map(settings))
@@ -48,6 +50,13 @@ class Series extends Collection {
     return OrderedSet.fromKeys(this.data);
   }
 
+  set bands(bands) {
+    const difference = bands.subtract(this.bands);
+    if (difference.size) {
+
+    }
+  } 
+
   at(band, onlySelection=false) {
     const source = onlySelection ? this.selected : this.data;
     return source.get(band, new Point());
@@ -57,8 +66,8 @@ class Series extends Collection {
     return this.copyWith({ selection: new Chunk({ start, end })});
   }
 
-  load(payload) {
-    const data = this.data.merge(Series.dataFromPayloads(payload, this.meta));
+  loadPayloads(payloads) {
+    const data = this.data.merge(Series.dataFromPayloads(payloads, this.meta));
     return this.copyWith({ data });
   }
 
