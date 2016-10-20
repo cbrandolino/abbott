@@ -12,18 +12,21 @@ const computeDimension = function(obj, name) {
 
 class Point {
 
-  constructor(
-    payload, dimensions,
-    { merge=true, formatters={}, id=null } = {}
+  constructor(payload, dimensions,
+    { merge=true, formatters={}, id=null, dummy=false } = {}
   ) {
-    this.prepareDimensions(dimensions, merge);
-    this.meta = { id, payload };
-    this.formatters = formatters;
     this.computedDimensions = { };
+    this.prepareDimensions(dimensions, merge);
+    this.meta = { id, payload, dummy };
+    this.formatters = formatters;
   }
 
   get id() {
     return this.meta.id;
+  }
+
+  get dummy() {
+    return this.meta.dummy;
   }
 
   get payload() {

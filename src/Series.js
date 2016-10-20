@@ -45,6 +45,10 @@ class Series extends Collection {
     return OrderedSet.fromKeys(this.data);
   }
 
+  get segments() {
+
+  }
+
   addBands(bands) {
     const difference = bands.subtract(this.bands);
     if (!difference.size) {
@@ -56,7 +60,7 @@ class Series extends Collection {
       new Point({ id: it, dummy: true, x: it, y }, this.dimensions),
     ]);
     return this.merge(newPoints);
-  } 
+  }
 
   at(band, onlySelection=false) {
     const source = onlySelection ? this.selected : this.data;
