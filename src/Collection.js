@@ -1,3 +1,5 @@
+import { is } from 'immutable';
+
 class Collection {
 
   constructor(attributes) {

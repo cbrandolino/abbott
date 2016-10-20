@@ -1,13 +1,22 @@
-import { Record, OrderedMap, Map } from "immutable";
+import { Record, OrderedMap, Map, OrderedSet } from "immutable";
 import Point from './Point';
-import Collection from './Collection'
+import Collection from './Collection';
+import Series from './Series';
 
 class SeriesCollection extends Collection {
   static fromPayloads(payloads, { pointDimensions, bandDimension }) {
-    console.log(bandDimension)
-    return new SeriesCollection({});
+    const originalSeries = payloads.map(it => 
+      Series.fromPayloads({ 
+        payloads: it.payloads, 
+        dimensions: pointDimensions,
+      }, { bandDimension }));
+    const bands = (new OrderedSet())
+      .union(...originalSeries.map(it => it.data.keySeq()))
+      .sort();
+
+    return new SeriesCollection({  bands });
   }
-  constructor({ meta, data, selection, pointers}) {
+  constructor({ meta, data, bands=[], selection, pointers}) {
     super({ meta, data, selection, pointers});
   }
 

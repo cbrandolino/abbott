@@ -2,7 +2,7 @@
 /* eslint-disable prefer-arrow-callback */
 /* eslint-disable max-nested-callbacks */
 /* eslint-disable no-unused-expressions */
-import { Map, Set, Record } from 'immutable';
+import { Map, Set, Record, OrderedSet, Seq } from 'immutable';
 import { expect } from 'chai';
 import Series from './Series';
 import Point from './Point';
@@ -95,6 +95,12 @@ describe('Types: Series', () => {
       const s1 = s.select(1, 2).load(morePayloads);
       expect(s1.selected.size).to.equal(1);
     });
+  });
+
+  describe('#bands', () => {
+    it('Provides getter for current bands', () => {
+      expect(s.bands).to.eql(OrderedSet.of(3, 5));
+    })
   });
 
 });

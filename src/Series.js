@@ -1,4 +1,4 @@
-import { OrderedMap } from 'immutable';
+import { OrderedMap, Map, OrderedSet } from 'immutable';
 import { Meta, Chunk } from './records'; 
 import Point from './Point';
 import Collection from './Collection'
@@ -7,7 +7,9 @@ class Series extends Collection {
 
   static fromPayloads(
     { payloads, dimensions={}, pointOptions={} }, settings) {
-    const meta = new Meta({ dimensions, pointOptions }).merge(settings)
+    const meta = new Meta({ 
+      dimensions: new Map(dimensions), 
+      pointOptions: new Map(pointOptions) }).merge(new Map(settings))
     return new Series({
       meta: meta,
       data: this.dataFromPayloads(payloads, meta),
@@ -28,7 +30,7 @@ class Series extends Collection {
 
   static pointsFromPayloads(payloads, dimensions, pointOptions) {
     return payloads.map(p =>
-      new Point(p, dimensions, pointOptions))
+      new Point(p, dimensions.toObject(), pointOptions.toObject()))
   }
 
   constructor({ meta, data, selection, pointers}) {
@@ -40,6 +42,10 @@ class Series extends Collection {
     const start = this.selection.start === null ? 0 : this.selection.start;
     const end = this.selection.end === null ? this.size : this.selection.end;
     return new OrderedMap(this.data.entrySeq().slice(start, end));
+  }
+
+  get bands() {
+    return OrderedSet.fromKeys(this.data);
   }
 
   at(band, onlySelection=false) {
