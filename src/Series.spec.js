@@ -64,7 +64,14 @@ describe('Types: Series', () => {
       expect(s1.size).to.equal(3);
       expect(s1.at(11).y).to.equal(0);
     });
+  });
 
+  describe('#segments', () => {
+    const s1 = s.addBands(OrderedSet.of(11, 13));
+    it('Returns subsets containing contiguous non-dummy Points', () => {
+      expect(s1.segments).to.have.length.of(1);
+      expect(s1.segments[0]).to.have.length.of(2);
+    });
   });
 
 });

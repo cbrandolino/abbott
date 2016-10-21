@@ -46,7 +46,16 @@ class Series extends Collection {
   }
 
   get segments() {
-
+    const segments = [[]];
+    this.data.forEach((it) => {
+      const lastElement = segments[segments.length - 1];
+      if (it.dummy) {
+        segments.push([])
+      } else {
+        lastElement.push(it);
+      }
+    })
+    return segments.filter(it => it.length);    
   }
 
   addBands(bands) {
@@ -56,8 +65,8 @@ class Series extends Collection {
     }
     const y = this.pointOptions.dummyValue || 0;
     const newPoints = difference.map(it => [ 
-      it, 
-      new Point({ id: it, dummy: true, x: it, y }, this.dimensions),
+      it,
+      new Point({ id: it, x: it, y }, this.dimensions, {dummy: true}),
     ]);
     return this.merge(newPoints);
   }
