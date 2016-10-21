@@ -7,18 +7,18 @@ import { OrderedMap } from 'immutable';
 import SeriesCollection from './SeriesCollection';
 import Series from './Series';
 
-const payloads = [
+const seriesFixtures = [
   {
-    id: 'seriesA',
-    payloads: [
+    attributes: { id: 'mySeries' },
+    payload: [
       { myBandKey: 5, value: 10 },
       { myBandKey: 3, value: 6 },
       { myBandKey: 7, value: 14 },
     ],   
   },
   {
-    id: 'seriesB',
-    payloads: [
+    attributes: { id: 'myOtherSeries' },
+    payload: [
       { myBandKey: 7, value: 14 },
       { myBandKey: 9, value: 18 },
       { myBandKey: 1, value: 2 },
@@ -26,16 +26,13 @@ const payloads = [
   },
 ];
 
-const pointDimensions = {
+const dimensions = {
   x: 'myBandKey',
   y: 'value',
 };
 
-const bandDimension = 'x';
-
-
 describe('Types: SeriesCollection', () => {
-  const c = SeriesCollection.fromPayloads(payloads, { pointDimensions, bandDimension });
+  const c = SeriesCollection.fromPayloads(seriesFixtures, dimensions);
   describe('#fromPayloads()', () => {
     it('returns a SeriesCollection instance', () => {
       expect(c).to.be.instanceOf(SeriesCollection);

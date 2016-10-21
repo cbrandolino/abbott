@@ -7,15 +7,13 @@ import { expect } from 'chai';
 import Series from './Series';
 import Point from './Point';
 
+const seriesAttributes = {
+  id: 'GOOGL',
+}
 
-const pointPayloads = [
+const pointPayload = [
   { myBandKey: 5, value: 10 },
   { myBandKey: 3, value: 6 },
-];
-
-const morePayloads = [
-  { myBandKey: 7, value: 14 },
-  { myBandKey: 1, value: 2 },
 ];
 
 const pointDimensions = {
@@ -23,25 +21,14 @@ const pointDimensions = {
   y: 'value',
 };
 
-const pointsObj = {
-  payloads: pointPayloads,
-  dimensions: pointDimensions,
-}
-
-const fancyPayloads = [{ myX: 1, doubleY: 2 }];
+const fancyPayload = [{ myX: 1, doubleY: 2 }];
 const fancyDimensions = { x: 'myX', y: (it) => (it.doubleY / 2) };
-const fancyObject = {
-  payloads: fancyPayloads,
-  dimensions: fancyDimensions,
-
-}
-
 
 describe('Types: Series', () => {
 
-  const s = Series.fromPayloads(pointsObj, {});
+  const s = Series.fromPayload(pointPayload, seriesAttributes, pointDimensions);
 
-  describe('#fromPayloads()', () => {
+  describe('#fromPayload()', () => {
     it('returns a series', () => {
       expect(s).to.be.instanceOf(Series);
     });
@@ -53,7 +40,7 @@ describe('Types: Series', () => {
       expect(s.data.first().x).to.equal(3);
     });
     it('supports fancy transforms for dimensions', () => {
-      const fancyS = Series.fromPayloads(fancyObject)
+      const fancyS = Series.fromPayload(fancyPayload, seriesAttributes, fancyDimensions)
       expect(fancyS.data.first().x).to.equal(1);
       expect(fancyS.data.first().y).to.equal(1);
     })
@@ -77,7 +64,14 @@ describe('Types: Series', () => {
       expect(s1.size).to.equal(3);
       expect(s1.at(11).y).to.equal(0);
     });
+  });
 
+  describe('#segments', () => {
+    const s1 = s.addBands(OrderedSet.of(11, 13));
+    it('Returns subsets containing contiguous non-dummy Points', () => {
+      expect(s1.segments).to.have.length.of(1);
+      expect(s1.segments[0]).to.have.length.of(2);
+    });
   });
 
 });

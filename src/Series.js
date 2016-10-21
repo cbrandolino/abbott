@@ -1,21 +1,15 @@
 import { OrderedMap, Map, OrderedSet } from 'immutable';
-import { Meta, Chunk } from './records'; 
 import Point from './Point';
 import Collection from './Collection'
 
 class Series extends Collection {
 
-  static fromPayloads(
-    { payloads, dimensions={}, pointOptions={} }, 
-    settings
-  ) {
-    const meta = new Meta({ 
-      dimensions: new Map(dimensions), 
-      pointOptions: new Map(pointOptions)}).merge(settings);
+  static fromPayload(payload, attributes, dimensions, pointOptions={}) {
     return new Series({
-      meta: meta,
-      data: this.dataFromPayloads(payloads, meta),
-      selection: new Chunk(),
+      attributes: new Map(attributes),
+      data: this.dataFrompayload(payload, dimensions, pointOptions),
+      dimensions: new Map(dimensions),
+      pointOptions: new Map(pointOptions),
     });
   }
 
@@ -25,18 +19,19 @@ class Series extends Collection {
     return new OrderedMap(bandPoints).sortBy(it => it.x);
   }
 
-  static dataFromPayloads(payloads, { dimensions, pointOptions }) {
-    const points = this.pointsFromPayloads(payloads, dimensions, pointOptions)
+  static dataFrompayload(payload, dimensions, pointOptions) {
+    const points = this.pointsFrompayload(payload, dimensions, pointOptions)
     return this.dataFromPoints(points);
   }
 
-  static pointsFromPayloads(payloads, dimensions, pointOptions) {
-    return payloads.map(p =>
-      new Point(p, dimensions.toObject(), pointOptions.toObject()))
+  static pointsFrompayload(payload, dimensions, pointOptions) {
+    return payload.map(p =>
+      new Point(p, dimensions, pointOptions))
   }
 
-  constructor({ meta, data, pointers}) {
-    super({ meta, data: data.sortBy((v, k) => k), pointers});
+  constructor({ data, attributes, dimensions, pointOptions }){
+    const sortedData = data.sortBy((v, k) => k);
+    super({ data: sortedData, attributes, dimensions, pointOptions });
   }
 
   // TODO: SLICE RIGHT
@@ -50,26 +45,39 @@ class Series extends Collection {
     return OrderedSet.fromKeys(this.data);
   }
 
+  get segments() {
+    const segments = [[]];
+    this.data.forEach((it) => {
+      const lastElement = segments[segments.length - 1];
+      if (it.dummy) {
+        segments.push([])
+      } else {
+        lastElement.push(it);
+      }
+    })
+    return segments.filter(it => it.length);    
+  }
+
   addBands(bands) {
     const difference = bands.subtract(this.bands);
     if (!difference.size) {
       return this.copyWith({});
     }
-    const y = this.meta.pointOptions.dummyValue || 0;
+    const y = this.pointOptions.dummyValue || 0;
     const newPoints = difference.map(it => [ 
-      it, 
-      new Point({ id: it, dummy: true, x: it, y }, this.meta.dimensions),
+      it,
+      new Point({ id: it, x: it, y }, this.dimensions, {dummy: true}),
     ]);
     return this.merge(newPoints);
-  } 
+  }
 
   at(band, onlySelection=false) {
     const source = onlySelection ? this.selected : this.data;
     return source.get(band, new Point());
   }
 
-  loadPayloads(payloads) {
-    return this.merge(Series.dataFromPayloads(payloads, this.meta));
+  loadpayload(payload) {
+    return this.merge(Series.dataFrompayload(payload, this.dimensions, this.pointOptions));
   }
 
   merge(newData) {
