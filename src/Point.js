@@ -1,3 +1,5 @@
+import { Map } from 'immutable';
+
 const defaultDimensions = {
   x: 'x',
   y: 'y',
@@ -5,19 +7,21 @@ const defaultDimensions = {
 }
 
 const computeDimension = function(obj, name) {
-  return (typeof obj.dimensionFns[name] === 'string') ?
-    obj.meta.payload[obj.dimensionFns[name]] :
-    obj.dimensionFns[name](obj.meta.payload);
-} 
+  const dimension = obj.dimensionFns.get(name);
+  return (typeof dimension === 'string') ?
+    obj.payload.get(dimension) :
+    dimension(obj.payload);
+}
 
 class Point {
 
   constructor(payload, dimensions,
     { merge=true, formatters={}, id=null, dummy=false } = {}
   ) {
+    this._payload = Map(payload);
     this.computedDimensions = { };
     this.prepareDimensions(dimensions, merge);
-    this.meta = { id, payload, dummy };
+    this.meta = { id, payloadHash: Map(payload).hashCode(), dummy };
     this.formatters = formatters;
   }
 
@@ -30,17 +34,26 @@ class Point {
   }
 
   get payload() {
-    return Object.assign({}, this.meta.payload);
+    return Map(this._payload);
+  }
+
+  set payload(data) {
+    throw new Error(`Attempt to modify payload.`);
+  }
+
+  equals(that) {
+    return this.payload.equals(that.payload) &&
+      this.dimensionFns.equals(that.dimensionFns);
   }
 
   prepareDimensions(dimensions, merge) {
-    this.dimensionFns = merge ? 
+    this.dimensionFns = Map(merge ? 
       Object.assign({}, defaultDimensions, dimensions) :
-      dimensions;
-    Object.keys(this.dimensionFns).forEach((key) => {
+      dimensions);
+    this.dimensionFns.keySeq().forEach((key) => {
       Object.defineProperty(this, key, {
         get: () => {
-          if (!(key in this.dimensionFns)) {
+          if (!this.dimensionFns.has(key)) {
             throw new Error(`No getter for ${key}.`);
           }
           if (typeof this.computedDimensions[key] === 'undefined') {

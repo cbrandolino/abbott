@@ -22,7 +22,7 @@ const pointDimensions = {
 };
 
 const fancyPayload = [{ myX: 1, doubleY: 2 }];
-const fancyDimensions = { x: 'myX', y: (it) => (it.doubleY / 2) };
+const fancyDimensions = { x: 'myX', y: (it) => (it.get('doubleY') / 2) };
 
 describe('Types: Series', () => {
 

@@ -4,11 +4,15 @@
 /* eslint-disable no-unused-expressions */
 
 import { expect } from 'chai';
+import { Map } from 'immutable';
+
+
 import Point from './Point';
+
 
 const orderlyPayload = { x: 2, z: 2 };
 const fancyPayload = { myX: 1, doubleY: 2 };
-const fancyDimensions = { x: 'myX', y: (it) => (it.doubleY / 2) };
+const fancyDimensions = { x: 'myX', y: (it) => (it.get('doubleY') / 2) };
 const mixedPayload = { halfX: 1, y: 2 };
 const id = "Pointy McPointface";
 
@@ -16,11 +20,12 @@ describe('Types: Point', function() {
 
   describe('Meta', function() {
     const p = new Point(orderlyPayload, {}, { id });
-    it('gets copy of payload', function() {
-      expect(p.payload).to.eql(orderlyPayload);
+    const pl = Map(orderlyPayload);
+    it('gets hash of payload', function() {
+      expect(p.payload.equals(pl)).to.be.true;
       const wontChangeProp = p.payload;
       wontChangeProp.x = null;
-      expect(p.payload).to.eql(orderlyPayload);
+      expect(p.payload.equals(pl)).to.be.true;
     });
     it('gets id', function() {
       expect(p.id).to.eql(id);
@@ -53,7 +58,7 @@ describe('Types: Point', function() {
         expect(p.y).to.equal(1);
       });
       it('mixes and matches default and custom dimensions', function() {
-        expect((new Point(mixedPayload, { x: (it) => (it.halfX * 2) })).x).to.equal(2);
+        expect((new Point(mixedPayload, { x: (it) => (it.get('halfX') * 2) })).x).to.equal(2);
       })
     });
   });
