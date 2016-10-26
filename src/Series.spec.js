@@ -25,8 +25,7 @@ const fancyPayload = [{ myX: 1, doubleY: 2 }];
 const fancyDimensions = { x: 'myX', y: (it) => (it.get('doubleY') / 2) };
 
 describe('Types: Series', () => {
-
-  const s = Series.fromPayload(pointPayload, seriesAttributes, pointDimensions);
+  const s = Series.fromPayload(seriesAttributes, pointPayload, pointDimensions);
   describe('#fromPayload()', () => {
     it('returns a series', () => {
       expect(s).to.be.instanceOf(Series);
@@ -39,7 +38,7 @@ describe('Types: Series', () => {
       expect(s.data.first().x).to.equal(3);
     });
     it('supports fancy transforms for dimensions', () => {
-      const fancyS = Series.fromPayload(fancyPayload, seriesAttributes, fancyDimensions)
+      const fancyS = Series.fromPayload(seriesAttributes, fancyPayload, fancyDimensions)
       expect(fancyS.data.first().x).to.equal(1);
       expect(fancyS.data.first().y).to.equal(1);
     })
@@ -66,7 +65,7 @@ describe('Types: Series', () => {
   });
 
   describe('#equals()', () => {
-    const s1 = Series.fromPayload(pointPayload, seriesAttributes, pointDimensions);
+    const s1 = Series.fromPayload(seriesAttributes, pointPayload, pointDimensions);
     it('considers two series with same data and attributes as equal', function() {
       expect(s.equals(s1)).to.be.true;
     });
