@@ -19,7 +19,7 @@ class Point {
     { merge=true, formatters={}, id=null, dummy=false } = {}
   ) {
     this._payload = Map(payload);
-    this.computedDimensions = { };
+    this._computedDimensions = { };
     this.prepareDimensions(dimensions, merge);
     this.meta = { id, payloadHash: Map(payload).hashCode(), dummy };
     this.formatters = formatters;
@@ -38,11 +38,11 @@ class Point {
   }
 
   set payload(data) {
-    throw new Error(`Attempt to modify payload.`);
+    throw new Error(`Attempt to modify payload. Input: ${data}`);
   }
 
   equals(that) {
-    return this.payload.equals(that.payload) &&
+    return this.meta.payloadHash === that.meta.payloadHash &&
       this.dimensionFns.equals(that.dimensionFns);
   }
 
@@ -56,10 +56,10 @@ class Point {
           if (!this.dimensionFns.has(key)) {
             throw new Error(`No getter for ${key}.`);
           }
-          if (typeof this.computedDimensions[key] === 'undefined') {
-            this.computedDimensions[key] = computeDimension(this, key);
+          if (typeof this._computedDimensions[key] === 'undefined') {
+            this._computedDimensions[key] = computeDimension(this, key);
           }
-          return this.computedDimensions[key];
+          return this._computedDimensions[key];
         },
       });
     });

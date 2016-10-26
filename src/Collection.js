@@ -12,6 +12,12 @@ class Collection {
     return this.data.size;
   }
 
+  equals(that) {
+    return (this.attributes.equals(that.attributes)) &&
+      (this.data.equals(that.data));
+  }
+
+
   first() {
     return this.data.first();
   }

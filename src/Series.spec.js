@@ -27,7 +27,6 @@ const fancyDimensions = { x: 'myX', y: (it) => (it.get('doubleY') / 2) };
 describe('Types: Series', () => {
 
   const s = Series.fromPayload(pointPayload, seriesAttributes, pointDimensions);
-
   describe('#fromPayload()', () => {
     it('returns a series', () => {
       expect(s).to.be.instanceOf(Series);
@@ -65,6 +64,13 @@ describe('Types: Series', () => {
       expect(s1.at(11).y).to.equal(0);
     });
   });
+
+  describe('#equals()', () => {
+    const s1 = Series.fromPayload(pointPayload, seriesAttributes, pointDimensions);
+    it('considers two series with same data and attributes as equal', function() {
+      expect(s.equals(s1)).to.be.true;
+    });
+  })
 
   describe('#segments', () => {
     const s1 = s.addBands(OrderedSet.of(11, 13));

@@ -61,6 +61,14 @@ describe('Types: Point', function() {
         expect((new Point(mixedPayload, { x: (it) => (it.get('halfX') * 2) })).x).to.equal(2);
       })
     });
+
+    describe('#equals()', function() {
+      const p1 = new Point(orderlyPayload, {}, { id });
+      const p2 = new Point(orderlyPayload, {}, { id });
+      it('considers two points with same payload and dimensions as equal', function() {
+        expect(p1.equals(p2)).to.be.true;
+      });
+    });
   });
 });
 
