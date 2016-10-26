@@ -4,13 +4,15 @@ import Collection from './Collection'
 
 class Series extends Collection {
 
-  static fromPayload(payload, attributes, dimensions, pointOptions={}) {
-    return new Series({
-      attributes: new Map(attributes),
-      data: this.dataFrompayload(payload, dimensions, pointOptions),
-      dimensions: new Map(dimensions),
-      pointOptions: new Map(pointOptions),
-    });
+  static fromPayload(attributes, payload, dimensions, pointOptions={}) {
+    return new Series(
+      Map(attributes),
+      this.dataFrompayload(payload, dimensions, pointOptions),
+      {
+        dimensions: new Map(dimensions),
+        pointOptions: new Map(pointOptions),
+      }
+    );
   }
 
   static dataFromPoints(points) {
@@ -29,9 +31,9 @@ class Series extends Collection {
       new Point(p, dimensions, pointOptions))
   }
 
-  constructor({ data, attributes, dimensions, pointOptions }){
+  constructor(attributes, data, { dimensions, pointOptions }){
     const sortedData = data.sortBy((v, k) => k);
-    super({ data: sortedData, attributes, dimensions, pointOptions });
+    super(attributes, sortedData, { dimensions, pointOptions });
   }
 
   // TODO: SLICE RIGHT
@@ -63,10 +65,10 @@ class Series extends Collection {
     if (!difference.size) {
       return this.copyWith({});
     }
-    const y = this.pointOptions.dummyValue || 0;
+    const y = this.options.dummyValue || 0;
     const newPoints = difference.map(it => [ 
       it,
-      new Point({ id: it, x: it, y }, this.dimensions, {dummy: true}),
+      new Point({ id: it, x: it, y }, this.options.dimensions, {dummy: true}),
     ]);
     return this.merge(newPoints);
   }
@@ -77,11 +79,12 @@ class Series extends Collection {
   }
 
   loadpayload(payload) {
-    return this.merge(Series.dataFrompayload(payload, this.dimensions, this.pointOptions));
+    return this.merge(Series.dataFrompayload(payload, this.options.dimensions, this.options.pointOptions));
   }
 
   merge(newData) {
     const data = this.data.merge(newData);
+
     return this.copyWith({ data });
   }
 

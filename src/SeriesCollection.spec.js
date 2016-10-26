@@ -34,6 +34,7 @@ const dimensions = {
 describe('Types: SeriesCollection', () => {
   const c = SeriesCollection.fromPayloads(seriesFixtures, dimensions);
   describe('#fromPayloads()', () => {
+
     it('returns a SeriesCollection instance', () => {
       expect(c).to.be.instanceOf(SeriesCollection);
     });
@@ -42,11 +43,11 @@ describe('Types: SeriesCollection', () => {
       expect(c.data.first()).to.be.instanceOf(Series);
     })
   });
+
   describe('#at()', () => {
     it('returns a map with values from each series at the given band', () => {
       expect(c.at(5).first().y).to.equal(10);
       expect(c.at(5).last().y).to.equal(0);
-  
     })
   });
 });
