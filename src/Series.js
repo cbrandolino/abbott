@@ -1,13 +1,13 @@
 import { OrderedMap, Map, OrderedSet } from 'immutable';
 import Point from './Point';
-import Collection from './Collection'
+import Collection from './Collection';
 
 class Series extends Collection {
 
   static fromPayload(attributes, payload, dimensions, pointOptions={}) {
     return new Series(
       Map(attributes),
-      this.dataFrompayload(payload, dimensions, pointOptions),
+      Series.dataFrompayload(payload, dimensions, pointOptions),
       {
         dimensions: new Map(dimensions),
         pointOptions: new Map(pointOptions),
@@ -18,7 +18,7 @@ class Series extends Collection {
   static dataFromPoints(points) {
     const bandPoints = points.map(p => (
       [ p.x, p ]));
-    return new OrderedMap(bandPoints).sortBy(it => it.x);
+    return (new OrderedMap(bandPoints)).sortBy(it => it.x);
   }
 
   static dataFrompayload(payload, dimensions, pointOptions) {
@@ -27,6 +27,7 @@ class Series extends Collection {
   }
 
   static pointsFrompayload(payload, dimensions, pointOptions) {
+    console.log(payload)
     return payload.map(p =>
       new Point(p, dimensions, pointOptions))
   }
@@ -85,7 +86,7 @@ class Series extends Collection {
   merge(newData) {
     const data = this.data.merge(newData);
 
-    return this.copyWith({ data });
+    return this.copyWith({ _data: data });
   }
 
 }
