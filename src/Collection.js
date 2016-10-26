@@ -1,27 +1,44 @@
+
 class Collection {
 
-  constructor(attributes) {
-    return Object.freeze(Object.assign(this, attributes))
+  constructor(attributes, data, ...options) {
+    this._data = data;
+    this._attributes = attributes;
+    this.options = options;
+    return Object.freeze(this);
   }
 
-  copyWith(newAttributes) {
-    return new this.constructor(Object.assign({}, this, newAttributes));
+  copyWith(newObject) {
+    const { attributes, data, options } = Object.assign({}, this, newObject)
+    return new this.constructor(attributes, data, ...options);
   }
 
   get size() {
     return this.data.size;
   }
 
-  first() {
-    return this.data.first();
+  get data() {
+    return this._data;
   }
 
-  last() {
-    return this.data.last();
+  get attributes() {
+    return this._attributes;
   }
 
-  map(fn) {
-    return this.data.map(fn);
+  get(x) {
+    return this._data.get(x);
+  }
+
+  [Symbol.iterator]() {
+    let index = -1;
+    return {
+      next: () => ({ value: this.data.get(++index), done: !this.data.has(index) })
+    };
+  };
+
+  equals(that) {
+    return (this.attributes.equals(that.attributes)) &&
+      (this.data.equals(that.data));
   }
 
   fromSelection() {
@@ -31,6 +48,8 @@ class Collection {
   toArray() {
     return this.data.toArray();
   }
+    
 }
+
 
 export default Collection;
