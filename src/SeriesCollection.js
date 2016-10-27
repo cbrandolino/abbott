@@ -29,6 +29,7 @@ class SeriesCollection extends Collection {
   at(band) {
     return this.data.map((it) => it.at(band));
   }
+
   get bands() {
     return this.attributes.bands;
   }

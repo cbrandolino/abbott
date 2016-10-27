@@ -5,7 +5,7 @@ import Collection from './Collection';
 class Series extends Collection {
 
   static fromPayload(attributes, payload, dimensions, pointOptions={}) {
-    return new Series(
+    const series = new Series(
       Map(attributes),
       Series.dataFrompayload(payload, dimensions, pointOptions),
       {
@@ -13,12 +13,14 @@ class Series extends Collection {
         pointOptions: new Map(pointOptions),
       }
     );
+    return series;
   }
 
   static dataFromPoints(points) {
     const bandPoints = points.map(p => (
       [ p.x, p ]));
-    return (new OrderedMap(bandPoints)).sortBy(it => it.x);
+    const pointMap = OrderedMap(bandPoints);
+    return pointMap.sort();
   }
 
   static dataFrompayload(payload, dimensions, pointOptions) {
@@ -64,6 +66,10 @@ class Series extends Collection {
     return this._domain[dimension];
   }
 
+  toArray() {
+    return this.data.toArray()
+  }
+
   addBands(bands) {
     const difference = bands.subtract(this.bands);
     if (!difference.size) {
@@ -83,7 +89,9 @@ class Series extends Collection {
   }
 
   loadpayload(payload) {
-    return this.merge(Series.dataFrompayload(payload, this.options.dimensions, this.options.pointOptions));
+    return this.merge(
+      Series.dataFrompayload(
+        payload, this.options.dimensions, this.options.pointOptions));
   }
 
   merge(newData) {

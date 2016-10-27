@@ -2,7 +2,7 @@
 /* eslint-disable prefer-arrow-callback */
 /* eslint-disable max-nested-callbacks */
 /* eslint-disable no-unused-expressions */
-import { Map, List } from 'immutable';
+import { Map } from 'immutable';
 import { expect } from 'chai';
 import Collection from './Collection';
 
