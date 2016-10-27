@@ -3,7 +3,7 @@ import Collection from './Collection';
 import Series from './Series';
 
 class SeriesCollection extends Collection {
-  static fromPayloads(seriesObjects, dimensions, pointOptions={}) {
+  static fromPayloads(seriesObjects, dimensions={}, pointOptions={}) {
     const data = seriesObjects.map(it =>
       Series.fromPayload(
         it.attributes,
@@ -29,6 +29,7 @@ class SeriesCollection extends Collection {
   at(band) {
     return this.data.map((it) => it.at(band));
   }
+
   get bands() {
     return this.attributes.bands;
   }

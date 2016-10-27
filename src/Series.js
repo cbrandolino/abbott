@@ -1,24 +1,26 @@
 import { OrderedMap, Map, OrderedSet } from 'immutable';
 import Point from './Point';
-import Collection from './Collection'
+import Collection from './Collection';
 
 class Series extends Collection {
 
   static fromPayload(attributes, payload, dimensions, pointOptions={}) {
-    return new Series(
+    const series = new Series(
       Map(attributes),
-      this.dataFrompayload(payload, dimensions, pointOptions),
+      Series.dataFrompayload(payload, dimensions, pointOptions),
       {
         dimensions: new Map(dimensions),
         pointOptions: new Map(pointOptions),
       }
     );
+    return series;
   }
 
   static dataFromPoints(points) {
     const bandPoints = points.map(p => (
       [ p.x, p ]));
-    return new OrderedMap(bandPoints).sortBy(it => it.x);
+    const pointMap = OrderedMap(bandPoints);
+    return pointMap.sort();
   }
 
   static dataFrompayload(payload, dimensions, pointOptions) {
@@ -36,13 +38,6 @@ class Series extends Collection {
     super(attributes, sortedData, { dimensions, pointOptions });
   }
 
-  // TODO: SLICE RIGHT
-  get selected() {
-    const start = this.selection.start === null ? 0 : this.selection.start;
-    const end = this.selection.end === null ? this.size : this.selection.end;
-    return new OrderedMap(this.data.entrySeq().slice(start, end));
-  }
-
   get bands() {
     return OrderedSet.fromKeys(this.data);
   }
@@ -58,6 +53,21 @@ class Series extends Collection {
       }
     })
     return segments.filter(it => it.length);    
+  }
+
+  domain(dimension) {
+    if (!this._domain[dimension]) {
+      const dimensionValues = this.toArray().map(el => el[dimension]);
+      this._domain[dimension] = [
+        Math.min(...dimensionValues),
+        Math.max(...dimensionValues),
+      ];
+    }
+    return this._domain[dimension];
+  }
+
+  toArray() {
+    return this.data.toArray()
   }
 
   addBands(bands) {
@@ -79,13 +89,15 @@ class Series extends Collection {
   }
 
   loadpayload(payload) {
-    return this.merge(Series.dataFrompayload(payload, this.options.dimensions, this.options.pointOptions));
+    return this.merge(
+      Series.dataFrompayload(
+        payload, this.options.dimensions, this.options.pointOptions));
   }
 
   merge(newData) {
     const data = this.data.merge(newData);
 
-    return this.copyWith({ data });
+    return this.copyWith({ _data: data });
   }
 
 }

@@ -1,32 +1,39 @@
+//@flow
+import { OrderedMap, Map } from 'immutable';
+
 
 class Collection {
+  _data: OrderedMap<number, *>;
+  _attributes: OrderedMap<string, *>;
+  options: Map<*>;
 
-  constructor(attributes, data, ...options) {
+  constructor(attributes:OrderedMap<string, *>, data:OrderedMap<number, *>, ...options:any) {
     this._data = data;
     this._attributes = attributes;
     this.options = options;
+    this._domain = []
     return Object.freeze(this);
   }
 
-  copyWith(newObject) {
-    const { attributes, data, options } = Object.assign({}, this, newObject)
-    return new this.constructor(attributes, data, ...options);
+  copyWith(newParams:Object) {
+    const newObj = Object.assign({}, this, newParams)
+    return new this.constructor(newObj._attributes, newObj._data, ...newObj.options);
   }
 
-  get size() {
+  get size():number {
     return this.data.size;
   }
 
-  get data() {
+  get data():OrderedMap<number, *> {
     return this._data;
   }
 
-  get attributes() {
+  get attributes():OrderedMap<string, *> {
     return this._attributes;
   }
 
-  get(x) {
-    return this._data.get(x);
+  map(fn:Function):any {
+    return this.data.map(fn);
   }
 
   [Symbol.iterator]() {
@@ -36,13 +43,9 @@ class Collection {
     };
   };
 
-  equals(that) {
+  equals(that:any) {
     return (this.attributes.equals(that.attributes)) &&
       (this.data.equals(that.data));
-  }
-
-  fromSelection() {
-    return this.copyWith({data: this.selected});
   }
 
   toArray() {
@@ -50,6 +53,5 @@ class Collection {
   }
     
 }
-
 
 export default Collection;
