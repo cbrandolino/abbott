@@ -11,6 +11,7 @@ class Collection {
     this._data = data;
     this._attributes = attributes;
     this.options = options;
+    this._domain = []
     return Object.freeze(this);
   }
 
@@ -33,10 +34,6 @@ class Collection {
 
   map(fn:Function):any {
     return this.data.map(fn);
-  }
-
-  get(x) {
-    return this.data.get(x);
   }
 
   [Symbol.iterator]() {

@@ -27,7 +27,6 @@ class Series extends Collection {
   }
 
   static pointsFrompayload(payload, dimensions, pointOptions) {
-    console.log(payload)
     return payload.map(p =>
       new Point(p, dimensions, pointOptions))
   }
@@ -35,13 +34,6 @@ class Series extends Collection {
   constructor(attributes, data, { dimensions, pointOptions }){
     const sortedData = data.sortBy((v, k) => k);
     super(attributes, sortedData, { dimensions, pointOptions });
-  }
-
-  // TODO: SLICE RIGHT
-  get selected() {
-    const start = this.selection.start === null ? 0 : this.selection.start;
-    const end = this.selection.end === null ? this.size : this.selection.end;
-    return new OrderedMap(this.data.entrySeq().slice(start, end));
   }
 
   get bands() {
@@ -59,6 +51,17 @@ class Series extends Collection {
       }
     })
     return segments.filter(it => it.length);    
+  }
+
+  domain(dimension) {
+    if (!this._domain[dimension]) {
+      const dimensionValues = this.toArray().map(el => el[dimension]);
+      this._domain[dimension] = [
+        Math.min(...dimensionValues),
+        Math.max(...dimensionValues),
+      ];
+    }
+    return this._domain[dimension];
   }
 
   addBands(bands) {
