@@ -6,7 +6,10 @@
   "scripts": {
     "test": "mocha --require babel-register --bail src/**/*.spec.js",
     "watch:test": "npm run test -- --watch",
-    "build": "babel src --ignore \"**/*.spec.js\" -d dist"
+    "build": "babel src --ignore \"**/*.spec.js\" -d dist",
+    "watch:build": "npm run build -- --watch",
+    "watch:flow": "npm run flow -- --watch",
+    "flow": "flow"
   },
   "repository": {
     "type": "git",
@@ -25,19 +28,21 @@
     "url": "https://github.com/cbrandolino/abbott/issues"
   },
   "homepage": "https://github.com/cbrandolino/abbott#readme",
+  "dependencies": {
+    "immutable": "^3.8.1"
+  },
   "devDependencies": {
     "babel-cli": "^6.16.0",
     "babel-core": "^6.17.0",
     "babel-eslint": "^7.0.0",
     "babel-plugin-proxy": "^1.1.0",
-    "babel-plugin-transform-flow-strip-types": "^6.14.0",
+    "babel-plugin-transform-flow-strip-types": "^6.18.0",
     "babel-preset-es2015": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0",
     "babel-register": "^6.16.3",
     "chai": "^3.5.0",
     "eslint": "^3.7.1",
     "flow-bin": "^0.33.0",
-    "immutable": "^3.8.1",
     "mocha": "^3.1.2",
     "proxy-polyfill": "^0.1.6"
   }
